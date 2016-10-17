@@ -1,0 +1,55 @@
+# -*- coding:utf-8 -*-
+import urllib2
+import requests
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
+import requests.packages.urllib3.util.ssl_
+requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL'
+
+# A='https://mm.taobao.com/tstar/search/tstar_model.do?_input_charset=utf-8&q=&viewFlag=A&sortType=default&searchStyle=&searchRegion=city%3A&searchFansNum=&currentPage='
+# B='&pageSize=100'
+# url=A+str(1)+B
+url = 'https://mm.taobao.com/tstar/search/tstar_model.do?_input_charset=utf-8'
+headers = {'User-Agent':"Mozilla/5.0 (X11; Linux x86_64; rv:36.0) Gecko/20100101 Firefox/36.0",
+           'Accept':"application/json, text/javascript, */*; q=0.01",
+           'Content-Type':"application/x-www-form-urlencoded; charset=UTF-8",
+           'Referer':"http://top.mogujie.com/top/share/user?uid=1ocne&ptp=1.NcdLDXm2.u2e4Keo4.22.C7davd",
+           'X-Requested-Width':"XMLHttpRequest"}
+d={
+    'q':'',
+    'viewFlag':'A',
+    'sortType':'default',
+    'searchStyle':'',
+    'searchRegion':'city:',
+    'searchFansNum':'',
+    'currentPage':'6',
+    'pageSize':'100'
+}
+# url='https://mm.taobao.com/tstar/search/tstar_model.do?_input_charset=utf-8&q=&viewFlag=A&sortType=default&searchStyle=&searchRegion=city%3A&searchFansNum=&currentPage=3&pageSize=100'
+
+html_post = requests.post(url,data=d)
+data=html_post.json()['data']['searchDOList']
+
+for item in data:
+    link='https:'+item['avatarUrl']
+    # print link
+    # print u'大图 http:', item['avatarUrl']
+    # print 'name ', item['realName']
+    city=item['city']
+    height=item['height']
+    weight=item['weight']
+    name=item['realName']
+    fname=item['realName']+"."+'jpg'
+    # file=open('/Users/jerry/Desktop/pic/%s'%fname.decode('utf-8'),'wb')
+    file=open('/Users/jerry/Desktop/pic/%s'%fname,'wb')
+    f=open('/Users/jerry/Desktop/pic/信息.txt','a')
+    # f=open('/Users/jerry/Desktop/pic/%s'%info.decode('utf-8'),'wb')
+    content2=urllib2.urlopen(link).read()
+    f.writelines('名字：'+name+'\n')
+    f.writelines('身高：'+height+'\n')
+    f.writelines('体重：'+weight+'\n')
+    f.writelines('城市：'+city+'\n\n')
+    file.write(content2)
+    file.close()
+    print u"downloading : %s\n"%name
